@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class TimetabledatabaseApplication
+class TimetableDatabaseApplication
 
 fun main(args: Array<String>) {
-	runApplication<TimetabledatabaseApplication>(*args)
+	runApplication<TimetableDatabaseApplication>(*args)
 }
