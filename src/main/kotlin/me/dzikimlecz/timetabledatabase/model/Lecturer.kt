@@ -2,7 +2,7 @@ package me.dzikimlecz.timetabledatabase.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
-class Lecturer(
+data class Lecturer(
     val name: String,
     val code: String =
         name.split(Regex("\\s"))
@@ -19,7 +19,7 @@ class Lecturer(
     inline fun derive(
         name: String = this.name,
         code: String = this.code,
-        instruction: MutableMap<SettlingPeriod, Int>.() -> Unit,
+        instruction: MutableMap<SettlingPeriod, Int>.() -> Unit = {},
     ) = Lecturer(name, code, HashMap(hoursWorked).apply(instruction).mapKeys { it.key.toString() })
 
     companion object {
