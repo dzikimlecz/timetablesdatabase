@@ -43,11 +43,8 @@ class MockLecturersDataSource : LecturersDataSource {
     }
 
     override fun delete(key: String): Lecturer {
-        val removed = try {
-            lecturers.first { it.code == key }
-        } catch(e: NoSuchElementException) {
-            throw NoSuchElementException("There is no lecturer of code: $key")
-        }
+        val removed = lecturers.firstOrNull { it.code == key }
+            ?: throw NoSuchElementException("There is no lecturer of code: $key")
         lecturers -= removed
         return removed
     }

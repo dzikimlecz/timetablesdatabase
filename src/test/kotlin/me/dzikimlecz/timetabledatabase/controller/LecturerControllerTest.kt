@@ -126,7 +126,30 @@ internal class LecturerControllerTest @Autowired constructor(
                 content = objectMapper.writeValueAsString(patched)}
             // then
             patch.andDo { print() }
-                .andExpect { status { isOk() } }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(APPLICATION_JSON)
+                        json(objectMapper.writeValueAsString(patched))
+                    }
+                }
+            mockMvc.get("$baseUrl/${patched.code}")
+                .andExpect { content { json(objectMapper.writeValueAsString(patched)) } }
+        }
+
+        @Test
+        fun `should fail to patch nonexistent Lecturer`() {
+            // given
+            val patched = Lecturer("Non Existent", "NON_EXISTENT",
+                mapOf(SettlingPeriod(LocalDate.now(), LocalDate.now().plusYears(20)).toString() to 0)
+            )
+            // when
+            val patch = mockMvc.patch(baseUrl) {
+                contentType = APPLICATION_JSON
+                content = objectMapper.writeValueAsString(patched)
+            }
+            // then
+            patch.andExpect { status { isNotFound() } }
         }
     }
     
@@ -143,7 +166,20 @@ internal class LecturerControllerTest @Autowired constructor(
             val delete = mockMvc.delete("$baseUrl/${deleted.code}")
             // then
             delete.andDo { print() }
-                .andExpect { status { isOk() } }
+                .andExpect {
+                    status { isOk() }
+                    content { json(objectMapper.writeValueAsString(deleted)) }
+                }
+            mockMvc.get("$baseUrl/${deleted.code}")
+                .andExpect { status { isNotFound() } }
+        }
+
+        @Test
+        fun `should get 404 on when trying to delete nonexistent lecturer`() {
+            // given
+            val nonExistentCode = "you ain't gonna find me"
+            // when/ then
+            mockMvc.delete("$baseUrl/$nonExistentCode").andExpect { status { isNotFound() } }
         }
     }
 }
