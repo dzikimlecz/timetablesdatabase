@@ -15,6 +15,6 @@ internal class LecturerServiceTest {
         //when
             lecturerService.getLecturers()
         //then
-            verify { dataSource.retrieveLecturers() }
+            verify { dataSource.retrieve() }
     }
 }
