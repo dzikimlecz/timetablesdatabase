@@ -9,7 +9,6 @@ class LecturerService(private val dataSource: LecturersDataSource) {
     fun getLecturers() = dataSource.retrieve()
     fun getLecturer(key: String): Lecturer = dataSource.retrieve(key)
     fun addLecturer(lecturer: Lecturer): Lecturer = dataSource.create(lecturer)
-
     fun patchLecturer(lecturer: Lecturer) = dataSource.patch(lecturer)
     fun deleteLecturer(key: String) = dataSource.delete(key)
 }
