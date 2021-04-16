@@ -15,9 +15,20 @@ class MockLecturersDataSource : LecturersDataSource {
     )
 
     override fun retrieve(): Collection<Lecturer> = lecturers
+
+    override fun retrieve(key: String): Lecturer {
+        if (key.count { it.isWhitespace() } > 2) try {
+            return retrieve().first { it.name.equals(key, ignoreCase = true) }
+        } catch(_: NoSuchElementException) {}
+        return retrieve().firstOrNull { it.code.equals(key, ignoreCase = true) }
+            ?: throw NoSuchElementException("Could not find lecturer $key")
+    }
+
+    override fun retrieve(predicate: (Lecturer) -> Boolean) = retrieve().filter(predicate)
+
     override fun create(e: Lecturer): Lecturer {
         require (lecturers.none { it.code == e.code }) { "Lecturer of code ${e.code} already exists." }
-        lecturers.add(e)
+        lecturers += e
         return e
     }
 
@@ -37,7 +48,7 @@ class MockLecturersDataSource : LecturersDataSource {
         } catch(e: NoSuchElementException) {
             throw NoSuchElementException("There is no lecturer of code: $key")
         }
-        lecturers.remove(removed)
+        lecturers -= removed
         return removed
     }
 
