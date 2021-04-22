@@ -1,7 +1,7 @@
 package me.dzikimlecz.timetabledatabase.model.database
 
 interface DataSource<E> {
-    fun retrieve() : Collection<E>
+    fun retrieve(): Collection<E>
 
     fun retrieve(key: String): E
 
