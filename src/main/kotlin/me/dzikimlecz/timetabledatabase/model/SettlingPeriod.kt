@@ -15,12 +15,10 @@ data class SettlingPeriod(
         private val pattern = Regex("\\{\\d{4}(-\\d{2}){2}::\\d{4}(-\\d{2}){2}}")
 
         fun of(string: String): SettlingPeriod {
-            require(validate(string)) { "Invalid value: $string" }
+            require(validate(string)) { "Invalid value for a Settling Period: $string" }
             val dates = string.trim().removePrefix("{").removeSuffix("}").split("::")
             return SettlingPeriod(LocalDate.parse(dates[0]), LocalDate.parse(dates[1]),)
         }
-
-        fun of(start: LocalDate, end: LocalDate) = SettlingPeriod(start, end)
 
         fun validate(string: String) = pattern.matches(string.trim())
     }
