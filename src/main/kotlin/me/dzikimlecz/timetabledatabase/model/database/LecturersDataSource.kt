@@ -4,6 +4,7 @@ import me.dzikimlecz.timetabledatabase.model.Lecturer
 
 interface LecturersDataSource : DataSource<Lecturer> {
 
-    fun retrieve(predicate: (Lecturer) -> Boolean): Collection<Lecturer>
+    override fun create(lecturer: Lecturer): Lecturer
 
+    override fun patch(lecturer: Lecturer): Lecturer
 }

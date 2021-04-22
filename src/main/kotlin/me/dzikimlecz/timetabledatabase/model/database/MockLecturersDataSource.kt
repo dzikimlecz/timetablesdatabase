@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository
 class MockLecturersDataSource : LecturersDataSource {
 
     private val lecturers = mutableListOf(
-        Lecturer("Marcin Najman", hoursWorkedStrings = emptyMap()),
-        Lecturer("Jan Paweł II", hoursWorkedStrings = emptyMap()),
-        Lecturer("Józef Stalin", hoursWorkedStrings = emptyMap()),
-        Lecturer("Jeff Bezos", hoursWorkedStrings = emptyMap()),
-        Lecturer("Twój Stary", hoursWorkedStrings = emptyMap()),
+        Lecturer("Marcin Najman", hoursWorked = emptyMap()),
+        Lecturer("Jan Paweł II", hoursWorked = emptyMap()),
+        Lecturer("Józef Stalin", hoursWorked = emptyMap()),
+        Lecturer("Jeff Bezos", hoursWorked = emptyMap()),
+        Lecturer("Twój Stary", hoursWorked = emptyMap()),
     )
 
     override fun retrieve(): Collection<Lecturer> = lecturers
@@ -24,20 +24,18 @@ class MockLecturersDataSource : LecturersDataSource {
             ?: throw NoSuchElementException("Could not find lecturer $key")
     }
 
-    override fun retrieve(predicate: (Lecturer) -> Boolean) = retrieve().filter(predicate)
-
-    override fun create(e: Lecturer): Lecturer {
-        require (lecturers.none { it.code == e.code }) { "Lecturer of code ${e.code} already exists." }
-        lecturers += e
-        return e
+    override fun create(lecturer: Lecturer): Lecturer {
+        require (lecturers.none { it.code == lecturer.code }) { "Lecturer of code ${lecturer.code} already exists." }
+        lecturers += lecturer
+        return lecturer
     }
 
-    override fun patch(e: Lecturer): Lecturer {
-        val indexToPatch = lecturers.indexOfFirst { it.code == e.code }
-        if (indexToPatch == -1) throw NoSuchElementException("There is no lecturer of code: ${e.code}")
-        lecturers[indexToPatch] = lecturers[indexToPatch].derive(e.name) {
+    override fun patch(lecturer: Lecturer): Lecturer {
+        val indexToPatch = lecturers.indexOfFirst { it.code == lecturer.code }
+        if (indexToPatch == -1) throw NoSuchElementException("There is no lecturer of code: ${lecturer.code}")
+        lecturers[indexToPatch] = lecturers[indexToPatch].derive(lecturer.name) {
             clear()
-            this += e.hoursWorked
+            this += lecturer.hoursWorked
         }
         return lecturers[indexToPatch]
     }

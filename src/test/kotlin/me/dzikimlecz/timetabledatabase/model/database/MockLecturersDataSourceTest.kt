@@ -30,7 +30,7 @@ internal class MockLecturersDataSourceTest {
     @Test
     fun `should create new Lecturer from given data`() {
         // when
-        val lecturer = Lecturer("New Guy", hoursWorkedStrings = emptyMap())
+        val lecturer = Lecturer("New Guy", hoursWorked = emptyMap())
         // then
         assertDoesNotThrow { lecturersSource.create(lecturer) }
         var retrieved: Lecturer? = null

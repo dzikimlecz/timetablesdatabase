@@ -15,15 +15,14 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.*
 import java.time.LocalDate
 
+private const val baseUrl = "/timetableapi/lecturers"
+
 @SpringBootTest
 @AutoConfigureMockMvc
 internal class LecturerControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper
 ) {
-
-    val baseUrl = "/api/lecturers"
-
 
     @Nested
     @DisplayName("Get Lecturers")
@@ -79,7 +78,7 @@ internal class LecturerControllerTest @Autowired constructor(
         @Test
         fun `should post a given Lecturer object`() {
             // given
-            val posted = Lecturer("Posted Guy", hoursWorkedStrings = mapOf())
+            val posted = Lecturer("Posted Guy", hoursWorked = mapOf())
             // when
             val post = mockMvc.post(baseUrl) {
                 contentType = APPLICATION_JSON
@@ -98,7 +97,7 @@ internal class LecturerControllerTest @Autowired constructor(
         @Test
         fun `should fail to add Lecturer of already existing code and return Bad Request`() {
             // given
-            val posted = Lecturer("Marcin Najman", hoursWorkedStrings = emptyMap())
+            val posted = Lecturer("Marcin Najman", hoursWorked = emptyMap())
             // when
             val post = mockMvc.post(baseUrl) {
                 contentType = APPLICATION_JSON
@@ -118,7 +117,7 @@ internal class LecturerControllerTest @Autowired constructor(
         fun `should patch an existing lecturer`() {
             // given
             val patched = Lecturer("Jeff Bezos", "JB",
-                mapOf(SettlingPeriod(LocalDate.now(), LocalDate.now().plusYears(20)).toString() to 0)
+                mapOf(SettlingPeriod(LocalDate.now(), LocalDate.now().plusYears(20)) to 0)
             )
             // when
             val patch = mockMvc.patch(baseUrl) {
@@ -141,7 +140,7 @@ internal class LecturerControllerTest @Autowired constructor(
         fun `should fail to patch nonexistent Lecturer`() {
             // given
             val patched = Lecturer("Non Existent", "NON_EXISTENT",
-                mapOf(SettlingPeriod(LocalDate.now(), LocalDate.now().plusYears(20)).toString() to 0)
+                mapOf(SettlingPeriod(LocalDate.now(), LocalDate.now().plusYears(20)) to 0)
             )
             // when
             val patch = mockMvc.patch(baseUrl) {
