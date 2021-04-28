@@ -1,6 +1,6 @@
 package me.dzikimlecz.timetabledatabase.model.database
 
-import me.dzikimlecz.timetabledatabase.model.Lecturer
+import me.dzikimlecz.lecturers.Lecturer
 
 interface LecturersDataSource : DataSource<Lecturer> {
 

@@ -2,7 +2,6 @@ package me.dzikimlecz.timetabledatabase.service
 
 import me.dzikimlecz.lecturers.LecturerTransferredSurrogate
 import me.dzikimlecz.timetabledatabase.model.database.LecturersDataSource
-import me.dzikimlecz.timetabledatabase.model.toLecturer
 import org.springframework.stereotype.Service
 
 @Service

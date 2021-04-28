@@ -1,6 +1,6 @@
 package me.dzikimlecz.timetabledatabase.model.database
 
-import me.dzikimlecz.timetabledatabase.model.Lecturer
+import me.dzikimlecz.lecturers.Lecturer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

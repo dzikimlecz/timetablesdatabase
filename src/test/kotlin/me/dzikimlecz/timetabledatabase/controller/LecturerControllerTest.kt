@@ -1,8 +1,8 @@
 package me.dzikimlecz.timetabledatabase.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import me.dzikimlecz.timetabledatabase.model.Lecturer
-import me.dzikimlecz.timetabledatabase.model.SettlingPeriod
+import me.dzikimlecz.lecturers.Lecturer
+import me.dzikimlecz.lecturers.SettlingPeriod
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
