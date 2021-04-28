@@ -26,7 +26,8 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.mockk:mockk:1.11.0")
-	implementation(files("C:\\dev\\timetable\\transferred\\build\\libs\\transferred-0.0.1-SNAPSHOT.jar"))
+	runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+	implementation(files("C:\\libs\\transferred-0.0.1-SNAPSHOT.jar"))
 }
 
 tasks.withType<KotlinCompile> {
