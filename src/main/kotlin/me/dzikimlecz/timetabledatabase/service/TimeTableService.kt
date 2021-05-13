@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 @Service
 class TimeTableService(
     private val tablesSource: TimeTablesDataSource,
-    private val lecturersSource: LecturersDataSource,
     private val lecturerService: LecturerService,
 ) {
 
@@ -20,26 +19,25 @@ class TimeTableService(
         tablesSource.retrieve(key.trim())
 
     fun addTimeTable(table: TimeTable): TimeTable {
+        lecturerService.verifyAllLecturersFound(table.table)
+        lecturerService.addTimeWorked(table)
         return tablesSource.create(table)
     }
 
     fun patchTimeTable(table: TimeTable): TimeTable {
+        lecturerService.verifyAllLecturersFound(table.table)
+        val oldTable = tablesSource.retrieve(table.name)
+        lecturerService.subtractTimeWorked(oldTable)
+        lecturerService.addTimeWorked(table)
         return tablesSource.patch(table)
     }
 
-    fun deleteTimeTable(key: String): TimeTable =
-        tablesSource.delete(key)
-
-    fun verifyAllLecturersFound(table: List<List<Cell>>) {
-        val notFoundCodes = mutableListOf<String>()
-        val foundCodes = mutableListOf<String>()
-        for (row in table) for (cell in row)
-            for (code in cell) if (code.isNotBlank() && code !in foundCodes) try {
-                foundCodes += lecturersSource.retrieve(code).code
-            } catch (e: NoSuchElementException) { notFoundCodes += code }
-        if (notFoundCodes.isNotEmpty())
-            throw LecturerNotFoundException(notFoundCodes)
+    fun deleteTimeTable(key: String): TimeTable {
+        val oldTable = tablesSource.retrieve(key)
+        lecturerService.subtractTimeWorked(oldTable)
+        return tablesSource.delete(key)
     }
+
 }
 
 class LecturerNotFoundException(val keys: List<String>): RuntimeException() {
