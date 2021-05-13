@@ -1,8 +1,9 @@
 package me.dzikimlecz.timetabledatabase.controller
 
 import me.dzikimlecz.timetabledatabase.model.TimeTable
+import me.dzikimlecz.timetabledatabase.service.LecturerNotFoundException
 import me.dzikimlecz.timetabledatabase.service.TimeTableService
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -12,11 +13,15 @@ class TimeTableController(val service: TimeTableService) {
 
     @ExceptionHandler(NoSuchElementException::class)
     fun notFound(e: NoSuchElementException): ResponseEntity<String> =
-        ResponseEntity(e.message, HttpStatus.NOT_FOUND)
+        ResponseEntity(e.message, NOT_FOUND)
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun badRequest(e: IllegalArgumentException): ResponseEntity<String> =
-        ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+        ResponseEntity(e.message, BAD_REQUEST)
+
+    @ExceptionHandler(LecturerNotFoundException::class)
+    fun unknownLecturer(e: LecturerNotFoundException): ResponseEntity<List<String>> =
+        ResponseEntity(e.keys, FAILED_DEPENDENCY)
 
     @GetMapping
     fun getLecturers() =
@@ -27,7 +32,7 @@ class TimeTableController(val service: TimeTableService) {
         service.getTimeTable(key)
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     fun postLecturer(@RequestBody table: TimeTable) =
         service.addTimeTable(table)
 
