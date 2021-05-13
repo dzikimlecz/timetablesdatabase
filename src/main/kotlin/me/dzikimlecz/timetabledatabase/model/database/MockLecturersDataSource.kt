@@ -17,12 +17,17 @@ class MockLecturersDataSource : LecturersDataSource {
     override fun retrieve(): Collection<Lecturer> = lecturers
 
     override fun retrieve(key: String): Lecturer {
-        if (key.count { it.isWhitespace() } > 2) try {
-            return retrieve().first { it.name.equals(key, ignoreCase = true) }
-        } catch(_: NoSuchElementException) {}
-        return retrieve().firstOrNull { it.code.equals(key, ignoreCase = true) }
-            ?: throw NoSuchElementException("Could not find lecturer $key")
+        return try {
+            if (key.none { it.isWhitespace() }) searchByCode(key)
+            else searchByName(key)
+        } catch(e: NoSuchElementException) { throw NoSuchElementException("Could not find lecturer $key") }
     }
+
+    fun searchByName(name: String): Lecturer =
+        retrieve().first { it.name.equals(name, ignoreCase = true) }
+
+    fun searchByCode(name: String): Lecturer =
+        retrieve().first { it.code.equals(name, ignoreCase = true) }
 
     override fun create(lecturer: Lecturer): Lecturer {
         require (lecturers.none { it.code == lecturer.code }) { "Lecturer of code ${lecturer.code} already exists." }
