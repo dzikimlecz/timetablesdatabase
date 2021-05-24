@@ -1,7 +1,7 @@
 package me.dzikimlecz.timetabledatabase.model
 
 import java.util.concurrent.atomic.AtomicInteger
-
+import javax.persistence.Entity
 
 data class Cell(
     val content: List<String>,
@@ -34,6 +34,6 @@ enum class DivisionDirection {
 
     companion object {
         fun of(value: String?): DivisionDirection? =
-            if (value !== null) valueOf(value.toUpperCase()) else null
+            if (value !== null) valueOf(value.uppercase()) else null
     }
 }

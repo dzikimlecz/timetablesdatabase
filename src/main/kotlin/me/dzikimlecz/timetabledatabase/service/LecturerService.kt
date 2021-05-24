@@ -5,18 +5,22 @@ import me.dzikimlecz.lecturers.SettlingPeriod
 import me.dzikimlecz.timetabledatabase.model.Cell
 import me.dzikimlecz.timetabledatabase.model.TimeTable
 import me.dzikimlecz.timetabledatabase.model.database.LecturersDataSource
+import me.dzikimlecz.timetabledatabase.model.toLocalImplementation
 import org.springframework.stereotype.Service
-import java.util.function.BiFunction
 
 @Service
 class LecturerService(private val dataSource: LecturersDataSource) {
-    fun getLecturers(): Collection<LecturerTransferredSurrogate> = dataSource.retrieve().map { it.toSurrogate() }
+    fun getLecturers(): Collection<LecturerTransferredSurrogate> =
+        dataSource.retrieve().map { it.toSurrogate() }
 
-    fun getLecturer(key: String) = dataSource.retrieve(key).toSurrogate()
+    fun getLecturer(key: String) =
+        dataSource.retrieve(key).toSurrogate()
 
-    fun addLecturer(lecturer: LecturerTransferredSurrogate) = dataSource.create(lecturer.toLecturer()).toSurrogate()
+    fun addLecturer(lecturer: LecturerTransferredSurrogate) =
+        dataSource.create(lecturer.toLecturer().toLocalImplementation()).toSurrogate()
 
-    fun patchLecturer(lecturer: LecturerTransferredSurrogate) = dataSource.patch(lecturer.toLecturer()).toSurrogate()
+    fun patchLecturer(lecturer: LecturerTransferredSurrogate) =
+        dataSource.patch(lecturer.toLecturer().toLocalImplementation()).toSurrogate()
 
     fun deleteLecturer(key: String) = dataSource.delete(key).toSurrogate()
 
@@ -26,7 +30,7 @@ class LecturerService(private val dataSource: LecturersDataSource) {
     fun subtractTimeWorked(table: TimeTable) =
         updateTimeWorked(table) { a, b -> a - b }
 
-    private fun updateTimeWorked(table: TimeTable, operator: BiFunction<Int, Int, Int>) {
+    private fun updateTimeWorked(table: TimeTable, operator: (Int, Int) -> Int) {
         val minutesWorked = collectTimeWorked(table)
         val period: SettlingPeriod = table.period()
         for ((code, minutes) in minutesWorked)
