@@ -83,8 +83,7 @@ class LecturerService(private val dataSource: LecturersDataSource) {
 
     private fun expectPresent(code: String): Lecturer {
         val expectedPresent = dataSource.findByCode(code)
-        require(expectedPresent.isPresent) { "Lecturer: $code does not exist" }
-        return expectedPresent.get()
+        return expectedPresent.orElseThrow { NoSuchElementException("Lecturer: $code does not exist") }
     }
 
     private fun expectNotPresent(code: String) {
