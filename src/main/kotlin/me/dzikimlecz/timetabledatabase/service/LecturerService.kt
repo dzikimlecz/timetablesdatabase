@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class LecturerService(private val dataSource: LecturersDataSource) {
-    fun getLecturers(): Collection<LecturerTransferredSurrogate> =
-        dataSource.findAll().map { it.toSurrogate() }
+    val lecturers: Collection<LecturerTransferredSurrogate>
+        get() = dataSource.findAll().map { it.toSurrogate() }
 
     fun getLecturer(key: String): LecturerTransferredSurrogate {
         val optionalResult =

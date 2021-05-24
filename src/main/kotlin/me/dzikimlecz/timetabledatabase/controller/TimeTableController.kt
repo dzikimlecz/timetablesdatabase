@@ -25,7 +25,7 @@ class TimeTableController(val service: TimeTableService) {
 
     @GetMapping
     fun getLecturers() =
-        service.getTimeTables()
+        service.timeTables
 
     @GetMapping("/{key}")
     fun getLecturer(@PathVariable key: String) =

@@ -13,8 +13,8 @@ internal class LecturerServiceTest {
     @Test
     fun `should call data source to retrieve lecturers`() {
         //when
-            lecturerService.getLecturers()
+            lecturerService.lecturers
         //then
-            verify { dataSource.retrieve() }
+            verify { dataSource.findAll() }
     }
 }

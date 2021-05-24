@@ -20,7 +20,7 @@ class LecturerController(private val service: LecturerService) {
 
     @GetMapping
     fun getLecturers() =
-        service.getLecturers()
+        service.lecturers
 
     @GetMapping("/{key}")
     fun getLecturer(@PathVariable key: String) =

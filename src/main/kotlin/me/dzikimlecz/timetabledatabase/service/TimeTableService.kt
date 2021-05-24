@@ -10,8 +10,8 @@ class TimeTableService(
     private val lecturerService: LecturerService,
 ) {
 
-    fun getTimeTables(): Collection<TimeTable> =
-        dataSource.findAll()
+    val timeTables: Collection<TimeTable>
+        get() = dataSource.findAll()
 
     fun getTimeTable(key: String): TimeTable {
         expectPresent(key)
