@@ -20,7 +20,7 @@ class TimeTableController(val service: TimeTableService) {
         ResponseEntity(e.message, BAD_REQUEST)
 
     @ExceptionHandler(LecturerNotFoundException::class)
-    fun unknownLecturer(e: LecturerNotFoundException): ResponseEntity<List<String>> =
+    fun unknownLecturers(e: LecturerNotFoundException): ResponseEntity<List<String>> =
         ResponseEntity(e.keys, FAILED_DEPENDENCY)
 
     @GetMapping

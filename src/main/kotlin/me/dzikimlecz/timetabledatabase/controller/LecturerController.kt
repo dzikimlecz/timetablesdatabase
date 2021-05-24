@@ -19,10 +19,12 @@ class LecturerController(private val service: LecturerService) {
         ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
 
     @GetMapping
-    fun getLecturers() = service.getLecturers()
+    fun getLecturers() =
+        service.getLecturers()
 
     @GetMapping("/{key}")
-    fun getLecturer(@PathVariable key: String) = service.getLecturer(key)
+    fun getLecturer(@PathVariable key: String) =
+        service.getLecturer(key)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

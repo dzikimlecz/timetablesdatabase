@@ -1,41 +1,55 @@
 package me.dzikimlecz.timetabledatabase.service
 
-import me.dzikimlecz.timetabledatabase.model.Cell
 import me.dzikimlecz.timetabledatabase.model.TimeTable
-import me.dzikimlecz.timetabledatabase.model.database.LecturersDataSource
 import me.dzikimlecz.timetabledatabase.model.database.TimeTablesDataSource
 import org.springframework.stereotype.Service
 
 @Service
 class TimeTableService(
-    private val tablesSource: TimeTablesDataSource,
+    private val dataSource: TimeTablesDataSource,
     private val lecturerService: LecturerService,
 ) {
 
     fun getTimeTables(): Collection<TimeTable> =
-        tablesSource.retrieve()
+        dataSource.findAll()
 
-    fun getTimeTable(key: String): TimeTable =
-        tablesSource.retrieve(key.trim())
+    fun getTimeTable(key: String): TimeTable {
+        expectPresent(key)
+        return dataSource.findByName(key.trim()).get()
+    }
 
     fun addTimeTable(table: TimeTable): TimeTable {
+        expectNotPresent(table.name)
         lecturerService.verifyAllLecturersFound(table.table)
         lecturerService.addTimeWorked(table)
-        return tablesSource.create(table)
+        return dataSource.save(table)
     }
 
     fun patchTimeTable(table: TimeTable): TimeTable {
+        val oldTable = expectPresent(table.name)
         lecturerService.verifyAllLecturersFound(table.table)
-        val oldTable = tablesSource.retrieve(table.name)
         lecturerService.subtractTimeWorked(oldTable)
         lecturerService.addTimeWorked(table)
-        return tablesSource.patch(table)
+        return dataSource.save(table)
     }
 
     fun deleteTimeTable(key: String): TimeTable {
-        val oldTable = tablesSource.retrieve(key)
+        val oldTable = expectPresent(key)
         lecturerService.subtractTimeWorked(oldTable)
-        return tablesSource.delete(key)
+        dataSource.delete(oldTable)
+        return oldTable
+    }
+
+
+    private fun expectPresent(name: String): TimeTable {
+        val expectedPresent = dataSource.findByName(name)
+        require(expectedPresent.isPresent) { "Table: $name does not exist" }
+        return expectedPresent.get()
+    }
+
+    private fun expectNotPresent(name: String) {
+        val expectedEmpty = dataSource.findByName(name)
+        require(expectedEmpty.isEmpty) { "Table: $name already exists" }
     }
 
 }

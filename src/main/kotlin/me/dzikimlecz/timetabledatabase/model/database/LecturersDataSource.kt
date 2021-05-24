@@ -1,11 +1,12 @@
 package me.dzikimlecz.timetabledatabase.model.database
 
 import me.dzikimlecz.timetabledatabase.model.Lecturer
-import me.dzikimlecz.timetabledatabase.model.TimeTable
+import org.bson.types.ObjectId
+import org.springframework.data.mongodb.repository.MongoRepository
 import java.util.*
 
 
-interface LecturersDataSource : DataSourceOf<Lecturer> {
+interface LecturersDataSource : MongoRepository<Lecturer, ObjectId> {
 
     /**
      * Finds a lecturer of the name same as the given one
@@ -17,14 +18,4 @@ interface LecturersDataSource : DataSourceOf<Lecturer> {
      */
     fun findByCode(code: String): Optional<Lecturer>
 
-    override fun retrieve(key: String): Lecturer {
-        val optionalResult =
-            if (key.none { it.isWhitespace() }) findByCode(key)
-            else findByName(key)
-        return optionalResult.orElseThrow { NoSuchElementException("Could not find lecturer $key") }
-    }
-
-    override fun create(lecturer: Lecturer): Lecturer
-
-    override fun patch(lecturer: Lecturer): Lecturer
 }
