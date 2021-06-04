@@ -2,12 +2,11 @@ package me.dzikimlecz.timetabledatabase.service
 
 import me.dzikimlecz.lecturers.LecturerTransferredSurrogate
 import me.dzikimlecz.lecturers.SettlingPeriod
-import me.dzikimlecz.timetabledatabase.model.Cell
-import me.dzikimlecz.timetabledatabase.model.Lecturer
-import me.dzikimlecz.timetabledatabase.model.TimeTable
+import me.dzikimlecz.timetabledatabase.model.*
+import me.dzikimlecz.timetabledatabase.model.DivisionDirection.HORIZONTAL
 import me.dzikimlecz.timetabledatabase.model.database.LecturersDataSource
-import me.dzikimlecz.timetabledatabase.model.toLocalImplementation
 import org.springframework.stereotype.Service
+import kotlin.math.max
 
 @Service
 class LecturerService(private val dataSource: LecturersDataSource) {
@@ -38,33 +37,37 @@ class LecturerService(private val dataSource: LecturersDataSource) {
     }
 
     fun addTimeWorked(table: TimeTable) =
-        updateTimeWorked(table) { a, b -> a + b }
+        updateTimeWorked(table) { a, b -> max(a - b, 0) }
 
     fun subtractTimeWorked(table: TimeTable) =
-        updateTimeWorked(table) { a, b -> a - b }
+        updateTimeWorked(table) { a, b -> max(a - b, 0) }
 
     private fun updateTimeWorked(table: TimeTable, operator: (Int, Int) -> Int) {
         val minutesWorked = collectTimeWorked(table)
         val period: SettlingPeriod = table.period()
-        for ((code, minutes) in minutesWorked)
-            dataSource.findByCode(code).get().derive {
-                merge(period, minutes, operator)
-            }.also { dataSource.save(it) }
+        for ((code, minutes) in minutesWorked) {
+            val oldOne = dataSource.findByCode(code).get()
+            oldOne.toGeneralImplementation()
+                .derive { merge(period, minutes, operator) }
+                .toLocalImplementation()
+                .also { dataSource.save(it) }
+            dataSource.delete(oldOne)
+        }
     }
 
     private fun collectTimeWorked(table: TimeTable): Map<String, Int> {
         val durations = table.timeSpans.map { list -> list.map { it?.minutes?.toInt() ?: 0 } }
         assert(durations.size == table.table.size)
-
         val minutesWorked = mutableMapOf<String, Int>()
         for (row in table.table) {
             for ((i, pair) in row.withIndex()) {
                 val columnDurations = durations[i]
-                for ((j, code) in pair.withIndex()) if (code.isNotBlank())
-                    minutesWorked.merge(code, columnDurations[j]) { a, b -> a + b }
+                for ((j, code) in pair.withIndex()) if (code.isNotBlank()) {
+                    val index =  if (pair.divisionOrientation == HORIZONTAL) j else 0
+                    minutesWorked.merge(code, columnDurations[index]) { a, b -> a + b }
+                }
             }
         }
-
         return minutesWorked
     }
 

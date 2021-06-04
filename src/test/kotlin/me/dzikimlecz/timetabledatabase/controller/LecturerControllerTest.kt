@@ -35,7 +35,7 @@ internal class LecturerControllerTest @Autowired constructor(
                 .andExpect {
                     status { isOk() }
                     content { contentType(APPLICATION_JSON) }
-                    jsonPath("$[0].name") { value("Marcin Najman") }
+                    jsonPath("$[0].name") { exists() }
                 }
         }
     }
