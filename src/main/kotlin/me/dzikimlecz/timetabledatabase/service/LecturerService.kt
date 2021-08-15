@@ -46,12 +46,11 @@ class LecturerService(private val dataSource: LecturersDataSource) {
         val minutesWorked = collectTimeWorked(table)
         val period: SettlingPeriod = table.period()
         for ((code, minutes) in minutesWorked) {
-            val oldOne = dataSource.findByCode(code).get()
+            val oldOne = dataSource.findByCode(code.uppercase()).orElse(null) ?: continue
             oldOne.toGeneralImplementation()
                 .derive { merge(period, minutes, operator) }
                 .toLocalImplementation()
-                .also { dataSource.save(it) }
-            dataSource.delete(oldOne)
+                .also { patchLecturer(it.toSurrogate()) }
         }
     }
 
