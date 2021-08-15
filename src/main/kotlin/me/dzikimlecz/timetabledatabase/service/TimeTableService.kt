@@ -51,6 +51,6 @@ class TimeTableService(
 
 }
 
-class LecturerNotFoundException(val keys: List<String>): RuntimeException() {
+class LecturerNotFoundException(val keys: List<String>): Exception() {
     init { require (keys.isNotEmpty()) { "Keys can't be empty" } }
 }
