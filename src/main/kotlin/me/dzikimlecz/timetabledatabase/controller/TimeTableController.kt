@@ -24,23 +24,23 @@ class TimeTableController(val service: TimeTableService) {
         ResponseEntity(e.keys, FAILED_DEPENDENCY)
 
     @GetMapping
-    fun getLecturers() =
+    fun getTables() =
         service.timeTables
 
     @GetMapping("/{key}")
-    fun getLecturer(@PathVariable key: String) =
+    fun getTable(@PathVariable key: String) =
         service.getTimeTable(key)
 
     @PostMapping
     @ResponseStatus(CREATED)
-    fun postLecturer(@RequestBody table: TimeTable) =
+    fun postTable(@RequestBody table: TimeTable) =
         service.addTimeTable(table)
 
     @PatchMapping
-    fun patchLecturer(@RequestBody table: TimeTable) =
+    fun patchTable(@RequestBody table: TimeTable) =
         service.patchTimeTable(table)
 
     @DeleteMapping("/{key}")
-    fun deleteLecturer(@PathVariable key: String) =
+    fun deleteTable(@PathVariable key: String) =
         service.deleteTimeTable(key)
 }
