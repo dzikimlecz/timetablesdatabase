@@ -41,10 +41,8 @@ class TimeTableService(
     }
 
 
-    private fun expectPresent(name: String): TimeTable {
-        val expectedPresent = dataSource.findByName(name)
-        return expectedPresent.orElseThrow { NoSuchElementException("Table: $name does not exist") }
-    }
+    private fun expectPresent(name: String): TimeTable =
+        dataSource.findByName(name).orElseThrow { NoSuchElementException("Table: $name does not exist") }
 
     private fun expectNotPresent(name: String) {
         val expectedEmpty = dataSource.findByName(name)
