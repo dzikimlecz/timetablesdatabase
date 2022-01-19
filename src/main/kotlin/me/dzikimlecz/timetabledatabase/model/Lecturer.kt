@@ -1,5 +1,6 @@
 package me.dzikimlecz.timetabledatabase.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import me.dzikimlecz.lecturers.LecturerTransferredSurrogate
 import me.dzikimlecz.lecturers.SettlingPeriod
 import org.bson.types.ObjectId
@@ -11,7 +12,7 @@ data class Lecturer(
         name.split(Regex("\\s"))
             .joinToString(separator = "") { it[0].toString().uppercase() },
     val hoursWorked: Map<String, Int>,
-    @Id var id: ObjectId? = null,
+    @JsonIgnore @Id var id: ObjectId? = null,
 ) {
 
     inline fun derive(
