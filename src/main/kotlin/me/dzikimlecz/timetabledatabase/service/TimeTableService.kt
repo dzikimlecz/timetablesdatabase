@@ -30,6 +30,7 @@ class TimeTableService(
         lecturerService.verifyAllLecturersFound(table.table)
         lecturerService.subtractTimeWorked(oldTable)
         lecturerService.addTimeWorked(table)
+        dataSource.delete(oldTable)
         return dataSource.save(table)
     }
 
