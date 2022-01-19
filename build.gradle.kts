@@ -13,7 +13,7 @@ version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
-	jcenter()
+	mavenCentral()
 }
 
 dependencies {
@@ -25,8 +25,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib")
 	implementation(files("C:\\libs\\transferred-1.jar"))
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.mockk:mockk:1.11.0")
-	runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+	testImplementation("io.mockk:mockk:1.12.2")
+	runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 	runtimeOnly("com.h2database:h2")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
