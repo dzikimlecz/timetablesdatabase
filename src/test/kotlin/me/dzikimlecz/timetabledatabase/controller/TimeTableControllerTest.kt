@@ -2,10 +2,7 @@ package me.dzikimlecz.timetabledatabase.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.dzikimlecz.timetabledatabase.model.TimeTable
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -22,6 +19,22 @@ internal class TimeTableControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper
 ) {
+
+    @BeforeEach
+    internal fun setUp() {
+        val table = TimeTable(LocalDate.now(), "test", listOf(), listOf())
+        mockMvc.post(baseUrl) {
+            contentType = JSON
+            content = objectMapper.writeValueAsString(table)
+        }.andReturn()
+    }
+
+    @AfterEach
+    internal fun clean() {
+        mockMvc.delete("$baseUrl/test")
+            .andReturn()
+        mockMvc.delete("$baseUrl/new table").andReturn()
+    }
 
     @Nested
     @DisplayName("Get TimeTables | $baseUrl")
