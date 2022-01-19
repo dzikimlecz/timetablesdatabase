@@ -44,7 +44,7 @@ class LecturerService(private val dataSource: LecturersDataSource) {
 
     private fun updateTimeWorked(table: TimeTable, operator: (Int, Int) -> Int) {
         val minutesWorked = collectTimeWorked(table)
-        val period: SettlingPeriod = table.period()
+        val period: SettlingPeriod = table.period() ?: return
         for ((code, minutes) in minutesWorked) {
             val oldOne = dataSource.findByCode(code.uppercase()).orElse(null) ?: continue
             oldOne.toGeneralImplementation()
@@ -99,9 +99,10 @@ class LecturerService(private val dataSource: LecturersDataSource) {
 
 }
 
-private fun TimeTable.period(): SettlingPeriod {
+private fun TimeTable.period(): SettlingPeriod? {
     val start = this.date
     val days = this.table.size - 1
     val end = start.plusDays(days.toLong())
-    return SettlingPeriod(start, end)
+    return try { SettlingPeriod(start, end) }
+    catch (e: Exception) { null }
 }
