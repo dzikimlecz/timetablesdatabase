@@ -21,7 +21,8 @@ data class Lecturer(
         instruction: MutableMap<SettlingPeriod, Int>.() -> Unit = {},
     ) = Lecturer(
         name, code,
-        hoursWorked.mapKeys { SettlingPeriod.of(it.key) }.toMutableMap().apply(instruction).mapKeys { it.key.toString() },
+        hoursWorked.mapKeys { SettlingPeriod.of(it.key) }.toMutableMap()
+            .apply(instruction).mapKeys { it.key.toString() },
         id
     )
 
@@ -40,9 +41,7 @@ data class Lecturer(
         if (name != other.name) return false
         if (code != other.code) return false
         if (id != other.id) return false
-        if (hoursWorked != other.hoursWorked) return false
-
-        return true
+        return hoursWorked == other.hoursWorked
     }
 
     override fun hashCode(): Int {
@@ -56,9 +55,8 @@ data class Lecturer(
 
 }
 
-fun me.dzikimlecz.lecturers.Lecturer.toLocalImplementation() = Lecturer(
-    name, code, hoursWorked.mapKeys { it.key.toString() }
-)
+fun me.dzikimlecz.lecturers.Lecturer.toLocalImplementation() =
+    Lecturer(name, code, hoursWorked.mapKeys { it.key.toString() })
 
 fun dropOmittedInfoChars(code: String) =
     """\[.*]|\**""".toRegex().replace(code, "")

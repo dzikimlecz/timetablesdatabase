@@ -15,7 +15,8 @@ class LecturerService(private val dataSource: LecturersDataSource) {
 
     fun getLecturer(key: String): LecturerTransferredSurrogate {
         val optionalResult =
-            if (key.none { it.isWhitespace() }) dataSource.findByCode(key.uppercase())
+            if (key.none { it.isWhitespace() })
+                dataSource.findByCode(key.uppercase())
             else dataSource.findByName(key)
         return optionalResult.orElseThrow { NoSuchElementException("Could not find lecturer $key") }.toSurrogate()
     }
