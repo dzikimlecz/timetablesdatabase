@@ -31,3 +31,4 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+/lib/timetables.transferred-1.0.1.jar
