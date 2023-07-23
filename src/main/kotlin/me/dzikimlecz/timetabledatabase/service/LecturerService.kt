@@ -56,14 +56,17 @@ class LecturerService(private val dataSource: LecturersDataSource) {
 
     private fun collectTimeWorked(table: TimeTable): Map<String, Int> {
         val durations = table.timeSpans.map { list -> list.map { it?.minutes?.toInt() ?: 0 } }
-        assert(durations.size == table.table.size)
+        assert(durations.size == table.table.size) // TODO: change to exception
         val minutesWorked = mutableMapOf<String, Int>()
         for (row in table.table) {
             for ((i, pair) in row.withIndex()) {
                 val columnDurations = durations[i]
-                for ((j, code) in pair.withIndex()) if (code.isNotBlank()) {
-                    val index =  if (pair.divisionOrientation == HORIZONTAL) j else 0
-                    minutesWorked.merge(code.trim(), columnDurations[index]) { a, b -> a + b }
+                for ((j, rawCode) in pair.withIndex()) {
+                    val code = dropOmittedInfoChars(rawCode)
+                    if (code.isNotBlank()) {
+                        val index = if (pair.divisionOrientation == HORIZONTAL) j else 0
+                        minutesWorked.merge(code.trim(), columnDurations[index]) { a, b -> a + b }
+                    }
                 }
             }
         }
@@ -73,10 +76,18 @@ class LecturerService(private val dataSource: LecturersDataSource) {
     fun verifyAllLecturersFound(table: List<List<Cell>>) {
         val notFoundCodes = mutableListOf<String>()
         val foundCodes = mutableListOf<String>()
-        for (row in table) for (cell in row)
-            for (code in cell) if (code.isNotBlank() && code !in foundCodes) try {
-                foundCodes += dataSource.findByCode(code.uppercase()).get().code
-            } catch (e: NoSuchElementException) { notFoundCodes += code }
+        for (row in table) {
+            for (cell in row) {
+                for (rawCode in cell) {
+                    val code = dropOmittedInfoChars(rawCode)
+                    if (code.isNotBlank() && code !in foundCodes) {
+                        try {
+                            foundCodes += dataSource.findByCode(code.uppercase()).get().code
+                        } catch (e: NoSuchElementException) { notFoundCodes += code }
+                    }
+                }
+            }
+        }
         if (notFoundCodes.isNotEmpty()) throw LecturerNotFoundException(notFoundCodes)
     }
 
@@ -88,12 +99,12 @@ class LecturerService(private val dataSource: LecturersDataSource) {
     }
 
     private fun expectPresent(code: String): Lecturer {
-        val expectedPresent = dataSource.findByCode(code.uppercase())
+        val expectedPresent = dataSource.findByCode(dropOmittedInfoChars(code.uppercase()))
         return expectedPresent.orElseThrow { NoSuchElementException("Lecturer: $code does not exist") }
     }
 
     private fun expectNotPresent(code: String) {
-        val expectedEmpty = dataSource.findByCode(code.uppercase())
+        val expectedEmpty = dataSource.findByCode(dropOmittedInfoChars(code.uppercase()))
         require(expectedEmpty.isEmpty) { "Lecturer: $code already exists" }
     }
 
