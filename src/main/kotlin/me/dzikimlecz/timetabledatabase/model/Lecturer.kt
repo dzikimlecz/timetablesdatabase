@@ -59,3 +59,6 @@ data class Lecturer(
 fun me.dzikimlecz.lecturers.Lecturer.toLocalImplementation() = Lecturer(
     name, code, hoursWorked.mapKeys { it.key.toString() }
 )
+
+fun dropOmittedInfoChars(code: String) =
+    """\[.*]|\**""".toRegex().replace(code, "")
