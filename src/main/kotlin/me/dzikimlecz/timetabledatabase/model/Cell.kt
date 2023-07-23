@@ -1,7 +1,6 @@
 package me.dzikimlecz.timetabledatabase.model
 
 import java.util.concurrent.atomic.AtomicInteger
-import javax.persistence.Entity
 
 data class Cell(
     val content: List<String>,
