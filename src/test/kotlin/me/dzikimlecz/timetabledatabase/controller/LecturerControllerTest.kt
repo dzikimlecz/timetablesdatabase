@@ -3,10 +3,7 @@ package me.dzikimlecz.timetabledatabase.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.dzikimlecz.lecturers.Lecturer
 import me.dzikimlecz.lecturers.SettlingPeriod
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -17,12 +14,31 @@ import java.time.LocalDate
 
 private const val baseUrl = "/timetableapi/lecturers"
 
+private const val key = "MN"
+
+private val l1 = Lecturer("${key[0]}an ${key[1]}an", hoursWorked = mapOf())
+private val l2 = Lecturer("Posted Guy", hoursWorked = mapOf())
+
 @SpringBootTest
 @AutoConfigureMockMvc
 internal class LecturerControllerTest @Autowired constructor(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper
 ) {
+
+    @BeforeEach
+    fun setUp() {
+        mockMvc.post(baseUrl) {
+            contentType = APPLICATION_JSON
+            content = objectMapper.writeValueAsString(l1)
+        }.andReturn()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        mockMvc.delete("$baseUrl/${l1.code}").andReturn()
+        mockMvc.delete("$baseUrl/${l2.code}").andReturn()
+    }
 
     @Nested
     @DisplayName("Get Lecturers")
@@ -46,15 +62,12 @@ internal class LecturerControllerTest @Autowired constructor(
     inner class GetLecturer {
         @Test
         fun `should return lecturer of given key`() {
-            //given
-            val key = "MN"
-            //when/then
             mockMvc.get("$baseUrl/$key")
                 .andDo { print() }
                 .andExpect {
                     status { isOk() }
                     content { contentType(APPLICATION_JSON) }
-                    jsonPath("$.name") { value("Marcin Najman") }
+                    jsonPath("$.name") { value(l1.name) }
                 }
         }
 
@@ -78,7 +91,7 @@ internal class LecturerControllerTest @Autowired constructor(
         @Test
         fun `should post a given Lecturer object`() {
             // given
-            val posted = Lecturer("Posted Guy", hoursWorked = mapOf())
+            val posted = l2
             // when
             val post = mockMvc.post(baseUrl) {
                 contentType = APPLICATION_JSON
@@ -97,7 +110,7 @@ internal class LecturerControllerTest @Autowired constructor(
         @Test
         fun `should fail to add Lecturer of already existing code and return Bad Request`() {
             // given
-            val posted = Lecturer("Marcin Najman", hoursWorked = emptyMap())
+            val posted = l1
             // when
             val post = mockMvc.post(baseUrl) {
                 contentType = APPLICATION_JSON
@@ -116,7 +129,7 @@ internal class LecturerControllerTest @Autowired constructor(
         @Test
         fun `should patch an existing lecturer`() {
             // given
-            val patched = Lecturer("Jeff Bezos", "JB",
+            val patched = Lecturer(l1.name, l1.code,
                 mapOf(SettlingPeriod(LocalDate.now(), LocalDate.now().plusYears(20)) to 0)
             )
             // when
@@ -160,7 +173,7 @@ internal class LecturerControllerTest @Autowired constructor(
         @Test
         fun `should delete lecturer of given code`() {
             // given
-            val deleted = Lecturer("Marcin Najman", "MN", emptyMap())
+            val deleted = l1
             // when
             val delete = mockMvc.delete("$baseUrl/${deleted.code}")
             // then
