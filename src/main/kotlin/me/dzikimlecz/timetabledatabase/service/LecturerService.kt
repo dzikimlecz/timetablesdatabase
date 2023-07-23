@@ -56,7 +56,9 @@ class LecturerService(private val dataSource: LecturersDataSource) {
 
     private fun collectTimeWorked(table: TimeTable): Map<String, Int> {
         val durations = table.timeSpans.map { list -> list.map { it?.minutes?.toInt() ?: 0 } }
-        assert(durations.size == table.table.size) // TODO: change to exception
+        if (durations.size != table.table.size) {
+            throw IllegalArgumentException("Malformed table")
+        }
         val minutesWorked = mutableMapOf<String, Int>()
         for (row in table.table) {
             for ((i, pair) in row.withIndex()) {
